@@ -244,6 +244,17 @@ namespace SteamBot
             return (UserHandler)Activator.CreateInstance(
                     controlClass, new object[] { bot, sid });
         }
+        
+
+        /// <summary>
+        /// Custom Command I R working in
+        /// </summary>
+        /// <param name="index">The random paramater value</param>
+        public void sendOffers()
+        {
+
+                
+        }
 
         #region Nested RunningBot class
 

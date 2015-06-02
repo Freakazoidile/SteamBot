@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using NDesk.Options;
+using MySql.Data.MySqlClient;
 
 namespace SteamBot
 {
@@ -23,6 +24,35 @@ namespace SteamBot
         [STAThread]
         public static void Main(string[] args)
         {
+
+           /*
+            // connect to steambookie db and send basic SELECT statement
+            string connString = "datasource=Database/Mysql;server=localhost;database=steambookie;Uid=root;password=;";
+            MySqlConnection conn = new MySqlConnection(connString);
+            MySqlCommand command = conn.CreateCommand();
+            command.CommandText = "SELECT bets.id, bet_items.item_id, items.name FROM bets INNER JOIN bet_items ON bets.id=bet_items.bet_id INNER JOIN items on bet_items.item_id=items.id WHERE status=1";
+            try
+            {
+                conn.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            MySqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Console.WriteLine(reader["item_id"].ToString());
+                Console.WriteLine(reader["name"].ToString());
+            }
+
+            Console.ReadLine();
+
+            //End DB interaction.
+            */
+            
             opts.Parse(args);
 
             if (showHelp)
@@ -166,6 +196,46 @@ namespace SteamBot
 
                     if (String.IsNullOrEmpty(inputText))
                         continue;
+                   
+                    string[] inputParams = inputText.Split(' ');
+                    int index;
+                    // if (int.TryParse(inputParams[1], out index) && String.Equals(inputParams[0], "Offer"))
+
+                    //sendOffer gets a list of the current bets, betitems and the item and send users a trade offer that have bet status 1.
+                    if (String.Equals(inputText, "sendOffer"))
+                    {
+
+                        // connect to steambookie db and send basic SELECT statement
+                        string connString = "datasource=Database/Mysql;server=localhost;database=steambookie;Uid=root;password=;";
+                        MySqlConnection conn = new MySqlConnection(connString);
+                        MySqlCommand command = conn.CreateCommand();
+                        command.CommandText = "SELECT bets.id, bet_items.item_id, items.name FROM bets INNER JOIN bet_items ON bets.id=bet_items.bet_id INNER JOIN items on bet_items.item_id=items.id WHERE status=1";
+                        try
+                        {
+                            conn.Open();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+
+                        MySqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            Console.WriteLine(reader["item_id"].ToString());
+                            Console.WriteLine(reader["name"].ToString());
+                        }
+
+                        Console.ReadLine();
+
+                        //End DB interaction.
+
+                        manager.sendOffers();
+                        continue;
+                    }
+
+
 
                     bmi.CommandInterpreter(inputText);
 
